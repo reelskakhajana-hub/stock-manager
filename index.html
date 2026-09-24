@@ -3,415 +3,1274 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111111">
 <title>Stock Manager</title>
 
 <style>
-*{box-sizing:border-box}
-body{
+*{
+  box-sizing:border-box;
   margin:0;
-  font-family:Arial,sans-serif;
-  background:#f5f6f7;
-  color:#111;
+  padding:0;
 }
-.header{
-  background:#111;
-  color:white;
-  padding:22px 18px;
-  border-radius:0 0 24px 24px;
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f6f8;
+  color:#111827;
 }
-.header h1{margin:0;font-size:27px}
-.header p{margin:6px 0 0;color:#aaa}
 
 .container{
-  max-width:650px;
-  margin:auto;
-  padding:16px;
+  width:min(1150px,94%);
+  margin:30px auto;
+}
+
+.header{
+  background:#111827;
+  color:white;
+  padding:25px;
+  border-radius:18px;
+  margin-bottom:20px;
+}
+
+.header h1{
+  font-size:28px;
+  margin-bottom:6px;
+}
+
+.header p{
+  color:#cbd5e1;
+  font-size:14px;
 }
 
 .stats{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:-12px;
+  gap:15px;
+  margin-bottom:20px;
 }
+
 .stat{
   background:white;
-  padding:15px 8px;
   border-radius:16px;
-  text-align:center;
-  box-shadow:0 3px 12px #00000012;
+  padding:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,.06);
 }
-.stat b{display:block;font-size:23px}
-.stat span{font-size:12px;color:#666}
 
-.addbox{
+.stat span{
+  display:block;
+  color:#64748b;
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+.stat strong{
+  font-size:28px;
+}
+
+.form-card,
+.products-card{
   background:white;
-  margin-top:18px;
-  padding:18px;
-  border-radius:20px;
-  box-shadow:0 3px 15px #00000010;
+  padding:22px;
+  border-radius:18px;
+  box-shadow:0 5px 20px rgba(0,0,0,.06);
+  margin-bottom:20px;
 }
-.addbox h2{margin-top:0}
 
-input{
+.form-card h2,
+.products-card h2{
+  margin-bottom:18px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field label{
+  font-size:13px;
+  font-weight:bold;
+  color:#374151;
+}
+
+.field input{
   width:100%;
   padding:13px;
-  border:1px solid #ddd;
-  border-radius:12px;
-  margin:6px 0 10px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  outline:none;
   font-size:15px;
 }
 
-.photo{
-  border:2px dashed #bbb;
-  border-radius:15px;
-  padding:18px;
-  text-align:center;
-  margin-bottom:12px;
+.field input:focus{
+  border-color:#111827;
 }
-.photo input{border:0;padding:5px}
+
+.full{
+  grid-column:1/-1;
+}
+
+.image-box{
+  border:2px dashed #cbd5e1;
+  border-radius:12px;
+  padding:15px;
+  text-align:center;
+}
+
+.image-box input{
+  border:none;
+  padding:5px;
+}
+
+.preview{
+  width:120px;
+  height:120px;
+  object-fit:cover;
+  border-radius:12px;
+  display:none;
+  margin:12px auto 0;
+  border:1px solid #ddd;
+}
+
+.buttons{
+  display:flex;
+  gap:10px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
 
 button{
-  border:0;
-  border-radius:12px;
-  padding:12px 16px;
+  border:none;
+  border-radius:10px;
+  padding:13px 18px;
+  font-size:14px;
   font-weight:bold;
   cursor:pointer;
 }
-.save{
-  width:100%;
-  background:#111;
+
+.save-btn{
+  background:#111827;
   color:white;
-  font-size:16px;
+}
+
+.cancel-btn{
+  background:#e5e7eb;
+  color:#111827;
+  display:none;
+}
+
+.backup-btn{
+  background:#2563eb;
+  color:white;
+}
+
+.restore-btn{
+  background:#059669;
+  color:white;
 }
 
 .search{
-  margin-top:18px;
+  width:100%;
+  padding:13px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  margin-bottom:18px;
+  font-size:15px;
 }
-.search input{
-  background:white;
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
 }
 
 .product{
-  background:white;
-  margin-top:12px;
-  padding:12px;
-  border-radius:18px;
-  display:flex;
-  gap:12px;
-  box-shadow:0 3px 12px #0000000d;
+  border:1px solid #e5e7eb;
+  border-radius:15px;
+  overflow:hidden;
+  background:#fff;
 }
-.product img{
-  width:105px;
-  height:105px;
+
+.product-image{
+  width:100%;
+  height:190px;
   object-fit:cover;
-  border-radius:14px;
-  background:#eee;
+  background:#f1f5f9;
 }
-.info{flex:1}
-.article{
-  font-weight:bold;
-  font-size:17px;
-}
-.price{
-  font-size:13px;
-  color:#777;
-  margin-top:5px;
-}
-.final{
-  color:#16803c;
-  font-weight:bold;
-  margin-top:3px;
-}
-.stock{
-  margin-top:8px;
-  font-weight:bold;
-}
-.controls{
+
+.no-image{
+  height:190px;
   display:flex;
   align-items:center;
+  justify-content:center;
+  background:#f1f5f9;
+  color:#94a3b8;
+}
+
+.product-info{
+  padding:15px;
+}
+
+.product-info h3{
+  font-size:17px;
+  margin-bottom:8px;
+}
+
+.article{
+  color:#64748b;
+  font-size:12px;
+  margin-bottom:10px;
+}
+
+.price{
+  display:flex;
   gap:8px;
-  margin-top:8px;
+  align-items:center;
+  margin-bottom:8px;
 }
-.controls button{
-  width:36px;
-  height:36px;
-  padding:0;
-  font-size:20px;
-  background:#eee;
+
+.real-price{
+  color:#94a3b8;
+  text-decoration:line-through;
+  font-size:13px;
 }
-.delete{
-  background:#ffe5e5!important;
-  color:#c00;
-  font-size:14px!important;
+
+.sale-price{
+  font-weight:bold;
+  font-size:18px;
 }
+
+.stock{
+  font-size:14px;
+  margin:8px 0;
+}
+
 .low{
-  color:#d35400;
+  color:#dc2626;
+  font-weight:bold;
+}
+
+.ok{
+  color:#059669;
+  font-weight:bold;
+}
+
+.product-buttons{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
+}
+
+.edit-btn{
+  flex:1;
+  background:#e0e7ff;
+  color:#3730a3;
+}
+
+.delete-btn{
+  flex:1;
+  background:#fee2e2;
+  color:#b91c1c;
 }
 
 .empty{
   text-align:center;
-  padding:30px;
-  color:#777;
+  padding:40px;
+  color:#64748b;
+  grid-column:1/-1;
+}
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#111827;
+  color:white;
+  padding:13px 20px;
+  border-radius:10px;
+  display:none;
+  z-index:9999;
+  box-shadow:0 5px 25px rgba(0,0,0,.2);
+}
+
+@media(max-width:800px){
+  .stats{
+    grid-template-columns:1fr;
+  }
+
+  .form-grid{
+    grid-template-columns:1fr;
+  }
+
+  .products{
+    grid-template-columns:1fr;
+  }
+
+  .header h1{
+    font-size:23px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <h1>📦 Stock Manager</h1>
-  <p>Simple inventory management</p>
-</div>
-
 <div class="container">
 
+  <div class="header">
+    <h1>📦 Stock Manager</h1>
+    <p>Manage your products, prices, images and stock.</p>
+  </div>
+
   <div class="stats">
+
     <div class="stat">
-      <b id="totalArticles">0</b>
-      <span>Articles</span>
+      <span>Total Articles</span>
+      <strong id="totalArticles">0</strong>
     </div>
+
     <div class="stat">
-      <b id="totalPieces">0</b>
       <span>Total Pieces</span>
+      <strong id="totalPieces">0</strong>
     </div>
+
     <div class="stat">
-      <b id="lowStock">0</b>
       <span>Low Stock</span>
-    </div>
-  </div>
-
-  <div class="addbox">
-    <h2>➕ Add Article</h2>
-
-    <div class="photo">
-      📸 Product Photo
-      <input id="photo" type="file" accept="image/*">
+      <strong id="lowStock">0</strong>
     </div>
 
-    <input id="article" placeholder="Article Number e.g. SL-001">
-
-    <input id="realPrice" type="number" placeholder="Real Price ₹">
-
-    <input id="finalPrice" type="number" placeholder="Final Price ₹">
-
-    <input id="quantity" type="number" min="0" placeholder="Quantity">
-
-    <button class="save" onclick="addProduct()">SAVE STOCK</button>
   </div>
 
-  <div class="search">
-    <input
-      id="search"
-      placeholder="🔍 Search article..."
-      oninput="renderProducts()">
-  </div>
+  <div class="form-card">
 
-  <div id="products"></div>
+    <h2 id="formTitle">Add New Product</h2>
 
-</div>
+    <div class="form-grid">
 
-<script>
+      <div class="field">
+        <label>Article Number</label>
+        <input id="article" type="text" placeholder="Example: ART-001">
+      </div>
 
-let products = JSON.parse(localStorage.getItem("stockProducts") || "[]");
+      <div class="field">
+        <label>Product Name</label>
+        <input id="name" type="text" placeholder="Product name">
+      </div>
 
-function saveData(){
-  localStorage.setItem("stockProducts", JSON.stringify(products));
-}
+      <div class="field">
+        <label>Real Price</label>
+        <input id="realPrice" type="number" min="0" placeholder="₹ 0">
+      </div>
 
-function addProduct(){
+      <div class="field">
+        <label>Sale Price</label>
+        <input id="salePrice" type="number" min="0" placeholder="₹ 0">
+      </div>
 
-  const article = document.getElementById("article").value.trim();
-  const realPrice = Number(document.getElementById("realPrice").value);
-  const finalPrice = Number(document.getElementById("finalPrice").value);
-  const quantity = Number(document.getElementById("quantity").value);
-  const photoInput = document.getElementById("photo");
+      <div class="field">
+        <label>Quantity</label>
+        <input id="quantity" type="number" min="0" value="0">
+      </div>
 
-  if(!article){
-    alert("Article number enter karo");
-    return;
-  }
+      <div class="field">
+        <label>Low Stock Alert At</label>
+        <input id="lowAlert" type="number" min="0" value="5">
+      </div>
 
-  if(quantity < 0){
-    alert("Quantity galat hai");
-    return;
-  }
+      <div class="field full">
+        <label>Product Image</label>
 
-  let image = "";
-
-  if(photoInput.files && photoInput.files[0]){
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-      image = e.target.result;
-      createProduct(article,realPrice,finalPrice,quantity,image);
-    };
-
-    reader.readAsDataURL(photoInput.files[0]);
-
-  }else{
-    createProduct(article,realPrice,finalPrice,quantity,"");
-  }
-}
-
-function createProduct(article,realPrice,finalPrice,quantity,image){
-
-  products.unshift({
-    id:Date.now(),
-    article,
-    realPrice,
-    finalPrice,
-    quantity,
-    image
-  });
-
-  saveData();
-
-  document.getElementById("article").value="";
-  document.getElementById("realPrice").value="";
-  document.getElementById("finalPrice").value="";
-  document.getElementById("quantity").value="";
-  document.getElementById("photo").value="";
-
-  renderProducts();
-
-  alert("Stock saved successfully ✅");
-}
-
-function changeStock(id,amount){
-
-  const product = products.find(p => p.id === id);
-
-  if(!product) return;
-
-  product.quantity += amount;
-
-  if(product.quantity < 0){
-    product.quantity = 0;
-  }
-
-  saveData();
-  renderProducts();
-}
-
-function deleteProduct(id){
-
-  if(!confirm("Is article ko delete karna hai?")) return;
-
-  products = products.filter(p => p.id !== id);
-
-  saveData();
-  renderProducts();
-}
-
-function renderProducts(){
-
-  const container = document.getElementById("products");
-  const search = document.getElementById("search").value.toLowerCase();
-
-  const filtered = products.filter(p =>
-    p.article.toLowerCase().includes(search)
-  );
-
-  if(filtered.length === 0){
-    container.innerHTML =
-      '<div class="empty">No products found</div>';
-  }else{
-
-    container.innerHTML = filtered.map(p => `
-
-      <div class="product">
-
-        ${
-          p.image
-          ? `<img src="${p.image}">`
-          : `<div style="width:105px;height:105px;border-radius:14px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:35px">📦</div>`
-        }
-
-        <div class="info">
-
-          <div class="article">
-            ${escapeHtml(p.article)}
-          </div>
-
-          <div class="price">
-            Real Price: ₹${p.realPrice || 0}
-          </div>
-
-          <div class="final">
-            Final Price: ₹${p.finalPrice || 0}
-          </div>
-
-          <div class="stock ${p.quantity <= 5 ? 'low' : ''}">
-            Stock: ${p.quantity} pcs
-            ${p.quantity <= 5 ? ' ⚠️' : ''}
-          </div>
-
-          <div class="controls">
-
-            <button onclick="changeStock(${p.id},-1)">
-              −
-            </button>
-
-            <b>${p.quantity}</b>
-
-            <button onclick="changeStock(${p.id},1)">
-              +
-            </button>
-
-            <button class="delete"
-              onclick="deleteProduct(${p.id})">
-              Delete
-            </button>
-
-          </div>
-
+        <div class="image-box">
+          <input id="image" type="file" accept="image/*">
+          <img id="preview" class="preview">
         </div>
 
       </div>
 
-    `).join("");
+    </div>
+
+    <div class="buttons">
+
+      <button class="save-btn" id="saveBtn" onclick="saveProduct()">
+        Save Product
+      </button>
+
+      <button class="cancel-btn" id="cancelBtn" onclick="cancelEdit()">
+        Cancel Edit
+      </button>
+
+      <button class="backup-btn" onclick="backupData()">
+        Backup
+      </button>
+
+      <button class="restore-btn" onclick="document.getElementById('restoreFile').click()">
+        Restore
+      </button>
+
+      <input
+        type="file"
+        id="restoreFile"
+        accept=".json"
+        style="display:none"
+        onchange="restoreData(event)"
+      >
+
+    </div>
+
+  </div>
+
+  <div class="products-card">
+
+    <h2>Products</h2>
+
+    <input
+      id="search"
+      class="search"
+      type="text"
+      placeholder="Search by article number or product name..."
+      oninput="renderProducts()"
+    >
+
+    <div id="products" class="products"></div>
+
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+
+/* =========================
+   DATABASE
+========================= */
+
+const DB_NAME = "MyStockManagerDB";
+const DB_VERSION = 1;
+const STORE_NAME = "products";
+
+let db;
+let editingId = null;
+let selectedImage = null;
+
+
+/* =========================
+   OPEN DATABASE
+========================= */
+
+function openDatabase(){
+
+  return new Promise((resolve,reject)=>{
+
+    const request = indexedDB.open(DB_NAME,DB_VERSION);
+
+    request.onupgradeneeded = function(event){
+
+      const database = event.target.result;
+
+      if(!database.objectStoreNames.contains(STORE_NAME)){
+
+        const store = database.createObjectStore(
+          STORE_NAME,
+          {
+            keyPath:"id",
+            autoIncrement:true
+          }
+        );
+
+        store.createIndex("article","article",{unique:false});
+        store.createIndex("name","name",{unique:false});
+
+      }
+
+    };
+
+    request.onsuccess = function(event){
+
+      db = event.target.result;
+      resolve(db);
+
+    };
+
+    request.onerror = function(){
+
+      reject(request.error);
+
+    };
+
+  });
+
+}
+
+
+/* =========================
+   ADD PRODUCT
+========================= */
+
+function addProduct(product){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(
+      STORE_NAME,
+      "readwrite"
+    );
+
+    const store = transaction.objectStore(STORE_NAME);
+
+    const request = store.add(product);
+
+    request.onsuccess = ()=>resolve(request.result);
+
+    request.onerror = ()=>reject(request.error);
+
+  });
+
+}
+
+
+/* =========================
+   UPDATE PRODUCT
+========================= */
+
+function updateProduct(product){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(
+      STORE_NAME,
+      "readwrite"
+    );
+
+    const store = transaction.objectStore(STORE_NAME);
+
+    const request = store.put(product);
+
+    request.onsuccess = ()=>resolve(true);
+
+    request.onerror = ()=>reject(request.error);
+
+  });
+
+}
+
+
+/* =========================
+   GET ALL
+========================= */
+
+function getProducts(){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(
+      STORE_NAME,
+      "readonly"
+    );
+
+    const store = transaction.objectStore(STORE_NAME);
+
+    const request = store.getAll();
+
+    request.onsuccess = ()=>resolve(request.result);
+
+    request.onerror = ()=>reject(request.error);
+
+  });
+
+}
+
+
+/* =========================
+   DELETE
+========================= */
+
+function deleteProduct(id){
+
+  return new Promise((resolve,reject)=>{
+
+    const transaction = db.transaction(
+      STORE_NAME,
+      "readwrite"
+    );
+
+    const store = transaction.objectStore(STORE_NAME);
+
+    const request = store.delete(id);
+
+    request.onsuccess = ()=>resolve(true);
+
+    request.onerror = ()=>reject(request.error);
+
+  });
+
+}
+
+
+/* =========================
+   IMAGE
+========================= */
+
+document.getElementById("image").addEventListener(
+  "change",
+  function(){
+
+    const file = this.files[0];
+
+    if(!file){
+      return;
+    }
+
+    if(!file.type.startsWith("image/")){
+
+      showToast("Please select an image.");
+
+      this.value = "";
+
+      return;
+
+    }
+
+    if(file.size > 10 * 1024 * 1024){
+
+      showToast("Image should be less than 10MB.");
+
+      this.value = "";
+
+      return;
+
+    }
+
+    selectedImage = file;
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+
+      const preview = document.getElementById("preview");
+
+      preview.src = e.target.result;
+
+      preview.style.display = "block";
+
+    };
+
+    reader.readAsDataURL(file);
+
+  }
+);
+
+
+/* =========================
+   SAVE / UPDATE
+========================= */
+
+async function saveProduct(){
+
+  const article =
+    document.getElementById("article").value.trim();
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const realPrice =
+    Number(document.getElementById("realPrice").value || 0);
+
+  const salePrice =
+    Number(document.getElementById("salePrice").value || 0);
+
+  const quantity =
+    Number(document.getElementById("quantity").value || 0);
+
+  const lowAlert =
+    Number(document.getElementById("lowAlert").value || 0);
+
+
+  if(!article){
+
+    showToast("Enter Article Number.");
+
+    return;
+
   }
 
-  updateStats();
+  if(!name){
+
+    showToast("Enter Product Name.");
+
+    return;
+
+  }
+
+  if(quantity < 0){
+
+    showToast("Quantity cannot be negative.");
+
+    return;
+
+  }
+
+
+  try{
+
+    let productImage = selectedImage;
+
+
+    /* EDIT WITHOUT NEW IMAGE */
+
+    if(editingId !== null && !selectedImage){
+
+      const oldProducts = await getProducts();
+
+      const oldProduct =
+        oldProducts.find(p => p.id === editingId);
+
+      if(oldProduct){
+
+        productImage = oldProduct.image || null;
+
+      }
+
+    }
+
+
+    const product = {
+
+      id: editingId,
+
+      article: article,
+
+      name: name,
+
+      realPrice: realPrice,
+
+      salePrice: salePrice,
+
+      quantity: quantity,
+
+      lowAlert: lowAlert,
+
+      image: productImage,
+
+      updatedAt: Date.now()
+
+    };
+
+
+    if(editingId === null){
+
+      delete product.id;
+
+      await addProduct(product);
+
+      showToast("Product saved successfully.");
+
+    }else{
+
+      await updateProduct(product);
+
+      showToast("Product updated successfully.");
+
+    }
+
+
+    resetForm();
+
+    await renderProducts();
+
+  }catch(error){
+
+    console.error(error);
+
+    showToast("Could not save product.");
+
+  }
+
 }
 
-function updateStats(){
 
-  const totalArticles = products.length;
+/* =========================
+   EDIT
+========================= */
 
-  const totalPieces = products.reduce(
-    (sum,p) => sum + Number(p.quantity || 0),0
-  );
+async function editProduct(id){
 
-  const lowStock = products.filter(
-    p => Number(p.quantity || 0) <= 5
-  ).length;
+  try{
 
-  document.getElementById("totalArticles").textContent =
-    totalArticles;
+    const products = await getProducts();
 
-  document.getElementById("totalPieces").textContent =
-    totalPieces;
+    const product =
+      products.find(p => p.id === id);
 
-  document.getElementById("lowStock").textContent =
-    lowStock;
+    if(!product){
+
+      showToast("Product not found.");
+
+      return;
+
+    }
+
+
+    editingId = id;
+
+    document.getElementById("article").value =
+      product.article || "";
+
+    document.getElementById("name").value =
+      product.name || "";
+
+    document.getElementById("realPrice").value =
+      product.realPrice || "";
+
+    document.getElementById("salePrice").value =
+      product.salePrice || "";
+
+    document.getElementById("quantity").value =
+      product.quantity ?? 0;
+
+    document.getElementById("lowAlert").value =
+      product.lowAlert ?? 5;
+
+
+    selectedImage = null;
+
+    document.getElementById("image").value = "";
+
+
+    if(product.image){
+
+      const preview =
+        document.getElementById("preview");
+
+      preview.src =
+        URL.createObjectURL(product.image);
+
+      preview.style.display = "block";
+
+    }else{
+
+      document.getElementById("preview").style.display =
+        "none";
+
+    }
+
+
+    document.getElementById("formTitle").innerText =
+      "Edit Product";
+
+    document.getElementById("saveBtn").innerText =
+      "Update Product";
+
+    document.getElementById("cancelBtn").style.display =
+      "inline-block";
+
+
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showToast("Could not open product.");
+
+  }
+
 }
 
-function escapeHtml(text){
 
-  return text
+/* =========================
+   DELETE
+========================= */
+
+async function removeProduct(id){
+
+  const confirmDelete =
+    confirm("Are you sure you want to delete this product?");
+
+  if(!confirmDelete){
+    return;
+  }
+
+  try{
+
+    await deleteProduct(id);
+
+    showToast("Product deleted.");
+
+    await renderProducts();
+
+  }catch(error){
+
+    console.error(error);
+
+    showToast("Could not delete product.");
+
+  }
+
+}
+
+
+/* =========================
+   CANCEL EDIT
+========================= */
+
+function cancelEdit(){
+
+  resetForm();
+
+  showToast("Edit cancelled.");
+
+}
+
+
+/* =========================
+   RESET FORM
+========================= */
+
+function resetForm(){
+
+  editingId = null;
+
+  selectedImage = null;
+
+  document.getElementById("article").value = "";
+
+  document.getElementById("name").value = "";
+
+  document.getElementById("realPrice").value = "";
+
+  document.getElementById("salePrice").value = "";
+
+  document.getElementById("quantity").value = "0";
+
+  document.getElementById("lowAlert").value = "5";
+
+  document.getElementById("image").value = "";
+
+  document.getElementById("preview").style.display =
+    "none";
+
+  document.getElementById("preview").src = "";
+
+  document.getElementById("formTitle").innerText =
+    "Add New Product";
+
+  document.getElementById("saveBtn").innerText =
+    "Save Product";
+
+  document.getElementById("cancelBtn").style.display =
+    "none";
+
+}
+
+
+/* =========================
+   RENDER PRODUCTS
+========================= */
+
+async function renderProducts(){
+
+  const container =
+    document.getElementById("products");
+
+  const search =
+    document.getElementById("search").value
+      .trim()
+      .toLowerCase();
+
+
+  try{
+
+    const products = await getProducts();
+
+
+    let filtered = products.filter(product => {
+
+      const article =
+        String(product.article || "").toLowerCase();
+
+      const name =
+        String(product.name || "").toLowerCase();
+
+      return (
+        article.includes(search) ||
+        name.includes(search)
+      );
+
+    });
+
+
+    /* STATS */
+
+    const totalArticles =
+      products.length;
+
+    const totalPieces =
+      products.reduce(
+        (sum,p) =>
+          sum + Number(p.quantity || 0),
+        0
+      );
+
+    const lowStock =
+      products.filter(
+        p =>
+          Number(p.quantity || 0) <=
+          Number(p.lowAlert || 0)
+      ).length;
+
+
+    document.getElementById("totalArticles").innerText =
+      totalArticles;
+
+    document.getElementById("totalPieces").innerText =
+      totalPieces;
+
+    document.getElementById("lowStock").innerText =
+      lowStock;
+
+
+    /* EMPTY */
+
+    if(filtered.length === 0){
+
+      container.innerHTML = `
+        <div class="empty">
+          No products found.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    filtered.forEach(product => {
+
+      const card =
+        document.createElement("div");
+
+      card.className = "product";
+
+
+      /* IMAGE */
+
+      if(product.image){
+
+        const img =
+          document.createElement("img");
+
+        img.className = "product-image";
+
+        img.src =
+          URL.createObjectURL(product.image);
+
+        img.alt =
+          product.name || "Product";
+
+        card.appendChild(img);
+
+      }else{
+
+        const noImage =
+          document.createElement("div");
+
+        noImage.className = "no-image";
+
+        noImage.innerText =
+          "No Image";
+
+        card.appendChild(noImage);
+
+      }
+
+
+      const info =
+        document.createElement("div");
+
+      info.className = "product-info";
+
+
+      const isLow =
+        Number(product.quantity || 0) <=
+        Number(product.lowAlert || 0);
+
+
+      info.innerHTML = `
+
+        <h3>${escapeHtml(product.name)}</h3>
+
+        <div class="article">
+          Article: ${escapeHtml(product.article)}
+        </div>
+
+        <div class="price">
+
+          <span class="real-price">
+            ₹${Number(product.realPrice || 0).toLocaleString("en-IN")}
+          </span>
+
+          <span class="sale-price">
+            ₹${Number(product.salePrice || 0).toLocaleString("en-IN")}
+          </span>
+
+        </div>
+
+        <div class="stock ${isLow ? "low" : "ok"}">
+
+          ${isLow
+            ? "⚠️ Low Stock"
+            : "✓ In Stock"
+          }
+
+          — ${Number(product.quantity || 0)} pieces
+
+        </div>
+
+        <div style="font-size:12px;color:#64748b;">
+          Alert at: ${Number(product.lowAlert || 0)}
+        </div>
+
+        <div class="product-buttons">
+
+          <button
+            class="edit-btn"
+            onclick="editProduct(${product.id})">
+            Edit
+          </button>
+
+          <button
+            class="delete-btn"
+            onclick="removeProduct(${product.id})">
+            Delete
+          </button>
+
+        </div>
+
+      `;
+
+
+      card.appendChild(info);
+
+      container.appendChild(card);
+
+    });
+
+
+  }catch(error){
+
+    console.error(error);
+
+    container.innerHTML = `
+      <div class="empty">
+        Could not load products.
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* =========================
+   ESCAPE HTML
+========================= */
+
+function escapeHtml(value){
+
+  return String(value ?? "")
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
+
 }
 
-renderProducts();
 
-</script>
+/* =========================
+   BACKUP
+========================= */
 
-</body>
-</html>
+async function backupData(){
+
+  try{
+
+    const products =
+      await getProducts();
+
+
+    const data = [];
+
+    for(const product of products){
+
+      let image = null;
+
+      if(product.image){
+
+        image =
+          await blobToDataURL(product.image);
+
+      }
+
+
+      data.push({
+
+        id:product.id,
+
+        article:product.article,
+
+        name:product.name,
+
+        realPrice:product.realPrice,
+
+        salePrice:product.salePrice,
+
+        quantity:product.quantity,
+
+        lowAlert:product.lowAlert,
+
+        image:image,
+
+        updatedAt:product.updatedAt
+
+      });
+
+    }
+
+
+    const blob =
+      new Blob(
+        [JSON.stringify(data)],
+        {
+          type:"application/json"
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(blob);
+
+
+    const a =
+      document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+      "stock-manager-backup.json";
+
+   
