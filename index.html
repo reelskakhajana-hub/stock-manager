@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>Stock Manager</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f5f6f7;
+  color:#111;
+}
+.header{
+  background:#111;
+  color:white;
+  padding:22px 18px;
+  border-radius:0 0 24px 24px;
+}
+.header h1{margin:0;font-size:27px}
+.header p{margin:6px 0 0;color:#aaa}
+
+.container{
+  max-width:650px;
+  margin:auto;
+  padding:16px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:-12px;
+}
+.stat{
+  background:white;
+  padding:15px 8px;
+  border-radius:16px;
+  text-align:center;
+  box-shadow:0 3px 12px #00000012;
+}
+.stat b{display:block;font-size:23px}
+.stat span{font-size:12px;color:#666}
+
+.addbox{
+  background:white;
+  margin-top:18px;
+  padding:18px;
+  border-radius:20px;
+  box-shadow:0 3px 15px #00000010;
+}
+.addbox h2{margin-top:0}
+
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  margin:6px 0 10px;
+  font-size:15px;
+}
+
+.photo{
+  border:2px dashed #bbb;
+  border-radius:15px;
+  padding:18px;
+  text-align:center;
+  margin-bottom:12px;
+}
+.photo input{border:0;padding:5px}
+
+button{
+  border:0;
+  border-radius:12px;
+  padding:12px 16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.save{
+  width:100%;
+  background:#111;
+  color:white;
+  font-size:16px;
+}
+
+.search{
+  margin-top:18px;
+}
+.search input{
+  background:white;
+}
+
+.product{
+  background:white;
+  margin-top:12px;
+  padding:12px;
+  border-radius:18px;
+  display:flex;
+  gap:12px;
+  box-shadow:0 3px 12px #0000000d;
+}
+.product img{
+  width:105px;
+  height:105px;
+  object-fit:cover;
+  border-radius:14px;
+  background:#eee;
+}
+.info{flex:1}
+.article{
+  font-weight:bold;
+  font-size:17px;
+}
+.price{
+  font-size:13px;
+  color:#777;
+  margin-top:5px;
+}
+.final{
+  color:#16803c;
+  font-weight:bold;
+  margin-top:3px;
+}
+.stock{
+  margin-top:8px;
+  font-weight:bold;
+}
+.controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:8px;
+}
+.controls button{
+  width:36px;
+  height:36px;
+  padding:0;
+  font-size:20px;
+  background:#eee;
+}
+.delete{
+  background:#ffe5e5!important;
+  color:#c00;
+  font-size:14px!important;
+}
+.low{
+  color:#d35400;
+}
+
+.empty{
+  text-align:center;
+  padding:30px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h1>📦 Stock Manager</h1>
+  <p>Simple inventory management</p>
+</div>
+
+<div class="container">
+
+  <div class="stats">
+    <div class="stat">
+      <b id="totalArticles">0</b>
+      <span>Articles</span>
+    </div>
+    <div class="stat">
+      <b id="totalPieces">0</b>
+      <span>Total Pieces</span>
+    </div>
+    <div class="stat">
+      <b id="lowStock">0</b>
+      <span>Low Stock</span>
+    </div>
+  </div>
+
+  <div class="addbox">
+    <h2>➕ Add Article</h2>
+
+    <div class="photo">
+      📸 Product Photo
+      <input id="photo" type="file" accept="image/*">
+    </div>
+
+    <input id="article" placeholder="Article Number e.g. SL-001">
+
+    <input id="realPrice" type="number" placeholder="Real Price ₹">
+
+    <input id="finalPrice" type="number" placeholder="Final Price ₹">
+
+    <input id="quantity" type="number" min="0" placeholder="Quantity">
+
+    <button class="save" onclick="addProduct()">SAVE STOCK</button>
+  </div>
+
+  <div class="search">
+    <input
+      id="search"
+      placeholder="🔍 Search article..."
+      oninput="renderProducts()">
+  </div>
+
+  <div id="products"></div>
+
+</div>
+
+<script>
+
+let products = JSON.parse(localStorage.getItem("stockProducts") || "[]");
+
+function saveData(){
+  localStorage.setItem("stockProducts", JSON.stringify(products));
+}
+
+function addProduct(){
+
+  const article = document.getElementById("article").value.trim();
+  const realPrice = Number(document.getElementById("realPrice").value);
+  const finalPrice = Number(document.getElementById("finalPrice").value);
+  const quantity = Number(document.getElementById("quantity").value);
+  const photoInput = document.getElementById("photo");
+
+  if(!article){
+    alert("Article number enter karo");
+    return;
+  }
+
+  if(quantity < 0){
+    alert("Quantity galat hai");
+    return;
+  }
+
+  let image = "";
+
+  if(photoInput.files && photoInput.files[0]){
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+      image = e.target.result;
+      createProduct(article,realPrice,finalPrice,quantity,image);
+    };
+
+    reader.readAsDataURL(photoInput.files[0]);
+
+  }else{
+    createProduct(article,realPrice,finalPrice,quantity,"");
+  }
+}
+
+function createProduct(article,realPrice,finalPrice,quantity,image){
+
+  products.unshift({
+    id:Date.now(),
+    article,
+    realPrice,
+    finalPrice,
+    quantity,
+    image
+  });
+
+  saveData();
+
+  document.getElementById("article").value="";
+  document.getElementById("realPrice").value="";
+  document.getElementById("finalPrice").value="";
+  document.getElementById("quantity").value="";
+  document.getElementById("photo").value="";
+
+  renderProducts();
+
+  alert("Stock saved successfully ✅");
+}
+
+function changeStock(id,amount){
+
+  const product = products.find(p => p.id === id);
+
+  if(!product) return;
+
+  product.quantity += amount;
+
+  if(product.quantity < 0){
+    product.quantity = 0;
+  }
+
+  saveData();
+  renderProducts();
+}
+
+function deleteProduct(id){
+
+  if(!confirm("Is article ko delete karna hai?")) return;
+
+  products = products.filter(p => p.id !== id);
+
+  saveData();
+  renderProducts();
+}
+
+function renderProducts(){
+
+  const container = document.getElementById("products");
+  const search = document.getElementById("search").value.toLowerCase();
+
+  const filtered = products.filter(p =>
+    p.article.toLowerCase().includes(search)
+  );
+
+  if(filtered.length === 0){
+    container.innerHTML =
+      '<div class="empty">No products found</div>';
+  }else{
+
+    container.innerHTML = filtered.map(p => `
+
+      <div class="product">
+
+        ${
+          p.image
+          ? `<img src="${p.image}">`
+          : `<div style="width:105px;height:105px;border-radius:14px;background:#eee;display:flex;align-items:center;justify-content:center;font-size:35px">📦</div>`
+        }
+
+        <div class="info">
+
+          <div class="article">
+            ${escapeHtml(p.article)}
+          </div>
+
+          <div class="price">
+            Real Price: ₹${p.realPrice || 0}
+          </div>
+
+          <div class="final">
+            Final Price: ₹${p.finalPrice || 0}
+          </div>
+
+          <div class="stock ${p.quantity <= 5 ? 'low' : ''}">
+            Stock: ${p.quantity} pcs
+            ${p.quantity <= 5 ? ' ⚠️' : ''}
+          </div>
+
+          <div class="controls">
+
+            <button onclick="changeStock(${p.id},-1)">
+              −
+            </button>
+
+            <b>${p.quantity}</b>
+
+            <button onclick="changeStock(${p.id},1)">
+              +
+            </button>
+
+            <button class="delete"
+              onclick="deleteProduct(${p.id})">
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    `).join("");
+  }
+
+  updateStats();
+}
+
+function updateStats(){
+
+  const totalArticles = products.length;
+
+  const totalPieces = products.reduce(
+    (sum,p) => sum + Number(p.quantity || 0),0
+  );
+
+  const lowStock = products.filter(
+    p => Number(p.quantity || 0) <= 5
+  ).length;
+
+  document.getElementById("totalArticles").textContent =
+    totalArticles;
+
+  document.getElementById("totalPieces").textContent =
+    totalPieces;
+
+  document.getElementById("lowStock").textContent =
+    lowStock;
+}
+
+function escapeHtml(text){
+
+  return text
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+renderProducts();
+
+</script>
+
+</body>
+</html>
